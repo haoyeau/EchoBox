@@ -19,21 +19,25 @@ io.on('connection', (socket) => {
     // Listen for a user joining a room
     socket.on('joinRoom', ({ roomId }) => {
         socket.join(roomId);
-        // console.log(`User joined room: ${roomId}`);
+        console.log(`User joined room: ${roomId}`);
     });
     // Listen for messages sent to a specific room
     socket.on('sendMessage', ({ roomId, message }) => {
+        // Store the message in the room's history
+        if (rooms[roomId]) {
+            rooms[roomId].messages.push(message);
+        }
         io.to(roomId).emit('newMessage', message);
-        // console.log(`Message sent to room ${roomId}: ${message}`);
+        console.log(`Message sent to room ${roomId}: ${message}`);
     });
     // Listen for a user leaving a room
     socket.on('leaveRoom', ({ roomId }) => {
         socket.leave(roomId);
-        // console.log(`User left room: ${roomId}`);
+        console.log(`User left room: ${roomId}`);
     });
     // Handle user disconnection
     socket.on('disconnect', () => {
-        // console.log('A user disconnected');
+        console.log('A user disconnected');
     });
 });
 
