@@ -1,32 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Plus, MessageCircle, Users } from 'lucide-react';
-import { api } from '../services/api';
+import { Plus, MessageCircle, Users, Calendar } from 'lucide-react';
+import { useRooms } from '../hooks/useRooms';
 
 const Home = () => {
-  const [rooms, setRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    loadRooms();
-  }, []);
-
-  const loadRooms = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const roomsData = await api.getRooms();
-      setRooms(roomsData);
-    } catch (err) {
-      setError('Failed to load rooms. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  
+  const { 
+    rooms, 
+    loading, 
+    error, 
+    createRoom, 
+    clearError 
+  } = useRooms();
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
@@ -34,13 +22,13 @@ const Home = () => {
 
     try {
       setIsCreating(true);
-      const newRoom = await api.createRoom(newRoomName.trim());
-      setRooms(prev => [newRoom, ...prev]);
+      const newRoom = await createRoom(newRoomName.trim());
       setNewRoomName('');
       // Automatically navigate to the new room
       navigate(`/room/${newRoom.id}`);
     } catch (err) {
-      setError('Failed to create room. Please try again.');
+      // Error is already handled by the hook
+      console.error('Failed to create room:', err);
     } finally {
       setIsCreating(false);
     }
@@ -48,6 +36,20 @@ const Home = () => {
 
   const handleRoomClick = (roomId) => {
     navigate(`/room/${roomId}`);
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = (now - date) / (1000 * 60 * 60);
+
+    if (diffInHours < 24) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInHours < 24 * 7) {
+      return date.toLocaleDateString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+    }
   };
 
   if (loading) {
@@ -68,8 +70,8 @@ const Home = () => {
       {error && (
         <div className="error">
           {error}
-          <button onClick={loadRooms} style={{ marginLeft: '1rem' }}>
-            Retry
+          <button onClick={clearError} style={{ marginLeft: '1rem' }}>
+            Dismiss
           </button>
         </div>
       )}
@@ -117,10 +119,18 @@ const Home = () => {
                 className="room-card"
                 onClick={() => handleRoomClick(room.id)}
               >
-                <div className="room-name">{room.name}</div>
+                <div className="room-header">
+                  <div className="room-name">{room.name}</div>
+                </div>
                 <div className="room-info">
-                  <Users size={16} />
-                  <span>Room ID: {room.id.slice(0, 8)}...</span>
+                  <div className="room-meta">
+                    <Calendar size={16} />
+                    <span>Created {formatDate(room.created_at)}</span>
+                  </div>
+                  <div className="room-join">
+                    <Users size={16} />
+                    <span>Join Room</span>
+                  </div>
                 </div>
               </div>
             ))}
