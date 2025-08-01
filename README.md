@@ -100,18 +100,6 @@ client/src/__tests__/
 
 ## Technology Stack
 
-- **Frontend**: React 19, Socket.io-client, React Router
+- **Frontend**: React, Socket.io-client, React Router
 - **Backend**: Node.js, Express, Socket.io, PostgreSQL
 - **Testing**: Jest, React Testing Library, Supertest
-- **Tools**: Nodemon, Create React App
-
-## Project Structure
-
-```
-echobox/
-├── client/          # React frontend
-├── server/          # Node.js backend
-├── TESTING.md       # Testing documentation
-├── package.json     # Root workspace configuration
-└── test-all.sh      # Test runner script
-```

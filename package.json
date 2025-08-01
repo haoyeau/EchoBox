@@ -4,6 +4,8 @@
   "description": "EchoBox - A focused discussion platform where every voice matters. Anonymous, topic-centered conversations without judgment.",
   "private": true,
   "scripts": {
+    "heroku-postbuild": "cd client && npm install && npm run build && cd ../server && npm install",
+    "start": "cd server && npm start",
     "test": "./test-all.sh",
     "test:client": "cd client && npm test",
     "test:server": "cd server && npm test",
@@ -20,6 +22,10 @@
   "keywords": ["discussion", "anonymous", "focused-conversations", "topic-centered", "real-time", "websocket", "react", "node"],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "devDependencies": {
     "concurrently": "^7.6.0"
   }

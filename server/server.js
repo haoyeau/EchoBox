@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const database = require('./config/database');
@@ -13,6 +14,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from the React app build directory in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+}
+
 // Routes
 app.use('/api', apiRoutes);
 
@@ -20,6 +26,13 @@ app.use('/api', apiRoutes);
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Catch all handler: send back React's index.html file in production
+if (process.env.NODE_ENV === 'production') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    });
+}
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
