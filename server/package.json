@@ -13,7 +13,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "EchoBox server - Anonymous discussion platform focused on meaningful conversations where every participant can contribute without concerns",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

@@ -64,7 +64,12 @@ const Home = () => {
     <div className="home-container">
       <div className="header">
         <h1>EchoBox</h1>
-        <p>Create rooms and chat with others in real-time</p>
+        <p>Where every voice matters - anonymous, focused discussions without judgment</p>
+        <div className="vision-subtitle">
+          <span>✨ Share ideas freely</span>
+          <span>🎯 Stay on topic</span>
+          <span>🤝 Speak without concerns</span>
+        </div>
       </div>
 
       {error && (
@@ -77,13 +82,16 @@ const Home = () => {
       )}
 
       <div className="create-room-section">
-        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#1e293b' }}>
-          Create a New Room
+        <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: '#1e293b' }}>
+          Start a Focused Discussion
         </h2>
+        <p style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#64748b', fontSize: '1rem' }}>
+          Create a topic-centered space where ideas can be shared openly and anonymously
+        </p>
         <form onSubmit={handleCreateRoom} className="create-room-form">
           <input
             type="text"
-            placeholder="Enter room name..."
+            placeholder="Enter discussion topic (e.g., 'Climate Solutions', 'Remote Work Culture')..."
             value={newRoomName}
             onChange={(e) => setNewRoomName(e.target.value)}
             className="room-input"
@@ -95,21 +103,21 @@ const Home = () => {
             disabled={isCreating || !newRoomName.trim()}
           >
             <Plus size={20} />
-            {isCreating ? 'Creating...' : 'Create Room'}
+            {isCreating ? 'Creating Discussion...' : 'Start Discussion'}
           </button>
         </form>
       </div>
 
       <div>
         <h2 style={{ marginBottom: '1.5rem', color: '#1e293b' }}>
-          Available Rooms ({rooms.length})
+          Active Discussions ({rooms.length})
         </h2>
         
         {rooms.length === 0 ? (
           <div className="empty-state">
             <MessageCircle size={48} style={{ margin: '0 auto 1rem' }} />
-            <h3>No rooms yet</h3>
-            <p>Create the first room to start chatting!</p>
+            <h3>No discussions yet</h3>
+            <p>Start the first topic-focused discussion where everyone can contribute freely!</p>
           </div>
         ) : (
           <div className="rooms-grid">
@@ -129,7 +137,7 @@ const Home = () => {
                   </div>
                   <div className="room-join">
                     <Users size={16} />
-                    <span>Join Room</span>
+                    <span>Join Discussion</span>
                   </div>
                 </div>
               </div>

@@ -216,8 +216,8 @@ const Room = () => {
           </div>
         ) : messageGroups.length === 0 ? (
           <div className="empty-messages">
-            <h3>No messages yet</h3>
-            <p>Be the first to send a message in this room!</p>
+            <h3>Discussion starts here</h3>
+            <p>Share your thoughts anonymously - every perspective matters!</p>
           </div>
         ) : (
           messageGroups.map((group) => (
@@ -246,7 +246,7 @@ const Room = () => {
           <input
             ref={inputRef}
             type="text"
-            placeholder={isConnected ? "Type an anonymous message..." : "Connecting..."}
+            placeholder={isConnected ? "Share your thoughts on this topic..." : "Connecting..."}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             className="message-input"
