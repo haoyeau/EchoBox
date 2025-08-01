@@ -36,6 +36,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
+    path: '/socket',
     cors: {
         origin: '*',
         methods: ['GET', 'POST']
