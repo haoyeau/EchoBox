@@ -1,21 +1,34 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { api } from '../services/api';
 import { useSocket } from '../contexts/SocketContext';
+import { Message } from '../types';
 
-export const useMessages = (roomId) => {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [sending, setSending] = useState(false);
+interface UseMessagesReturn {
+  messages: Message[];
+  loading: boolean;
+  error: string | null;
+  sending: boolean;
+  loadMessages: (page?: number, limit?: number) => Promise<any>;
+  loadLatestMessages: (limit?: number) => Promise<void>;
+  sendMessage: (content: string) => Promise<boolean>;
+  addMessage: (newMessage: Message) => void;
+  clearError: () => void;
+}
+
+export const useMessages = (roomId: string): UseMessagesReturn => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState<boolean>(false);
   const { onNewMessage, onRoomHistory, sendMessage, isConnected } = useSocket();
-  const messagesRef = useRef([]);
+  const messagesRef = useRef<Message[]>([]);
 
   // Keep messages ref in sync
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
 
-  const loadMessages = useCallback(async (page = 1, limit = 100) => {
+  const loadMessages = useCallback(async (page: number = 1, limit: number = 100): Promise<any> => {
     if (!roomId) return;
     
     try {
@@ -28,7 +41,7 @@ export const useMessages = (roomId) => {
       setMessages(messagesData);
       
       return response.pagination || null;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || 'Failed to load messages');
       console.error('Error loading messages:', err);
     } finally {
@@ -36,7 +49,7 @@ export const useMessages = (roomId) => {
     }
   }, [roomId]);
 
-  const loadLatestMessages = useCallback(async (limit = 50) => {
+  const loadLatestMessages = useCallback(async (limit: number = 50): Promise<void> => {
     if (!roomId) return;
     
     try {
@@ -44,7 +57,7 @@ export const useMessages = (roomId) => {
       setError(null);
       const messagesData = await api.getLatestMessages(roomId, limit);
       setMessages(messagesData);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || 'Failed to load latest messages');
       console.error('Error loading latest messages:', err);
     } finally {
@@ -52,14 +65,13 @@ export const useMessages = (roomId) => {
     }
   }, [roomId]);
 
-  const addMessage = useCallback((newMessage) => {
+  const addMessage = useCallback((newMessage: Message): void => {
     setMessages(prev => {
       // Avoid duplicates by checking if message already exists
       const exists = prev.some(msg => 
         msg.id === newMessage.id || 
         (msg.content === newMessage.content && 
-         msg.sender === newMessage.sender && 
-         Math.abs(new Date(msg.timestamp) - new Date(newMessage.timestamp)) < 1000)
+         Math.abs(new Date(msg.timestamp).getTime() - new Date(newMessage.timestamp).getTime()) < 1000)
       );
       
       if (exists) return prev;
@@ -71,7 +83,7 @@ export const useMessages = (roomId) => {
     });
   }, []);
 
-  const sendNewMessage = useCallback(async (content) => {
+  const sendNewMessage = useCallback(async (content: string): Promise<boolean> => {
     if (!content.trim() || !roomId || !isConnected) return false;
     
     try {
@@ -82,7 +94,7 @@ export const useMessages = (roomId) => {
       sendMessage(roomId, content.trim());
       
       return true;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || 'Failed to send message');
       console.error('Error sending message:', err);
       return false;
@@ -96,7 +108,7 @@ export const useMessages = (roomId) => {
     if (!roomId) return;
 
     const cleanupNewMessage = onNewMessage?.(addMessage);
-    const cleanupRoomHistory = onRoomHistory?.((historyMessages) => {
+    const cleanupRoomHistory = onRoomHistory?.((historyMessages: Message[]) => {
       setMessages(historyMessages);
     });
 

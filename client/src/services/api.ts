@@ -1,9 +1,10 @@
 import config from '../config/environment';
+import { Room, Message, PaginatedMessages } from '../types';
 
 const API_BASE_URL = config.apiBaseUrl;
 
 // API Response handler
-const handleResponse = async (response) => {
+const handleResponse = async (response: Response): Promise<any> => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
@@ -13,7 +14,7 @@ const handleResponse = async (response) => {
 
 export const api = {
   // Get all rooms
-  getRooms: async () => {
+  getRooms: async (): Promise<Room[]> => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms`);
       return await handleResponse(response);
@@ -24,7 +25,7 @@ export const api = {
   },
 
   // Get a specific room by ID
-  getRoom: async (roomId) => {
+  getRoom: async (roomId: string): Promise<Room> => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`);
       return await handleResponse(response);
@@ -35,7 +36,7 @@ export const api = {
   },
 
   // Create a new room
-  createRoom: async (name) => {
+  createRoom: async (name: string): Promise<Room> => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms`, {
         method: 'POST',
@@ -52,7 +53,7 @@ export const api = {
   },
 
   // Get messages from a specific room with pagination
-  getRoomMessages: async (roomId, page = 1, limit = 100) => {
+  getRoomMessages: async (roomId: string, page: number = 1, limit: number = 100): Promise<PaginatedMessages> => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms/${roomId}/messages?page=${page}&limit=${limit}`);
       return await handleResponse(response);
@@ -63,7 +64,7 @@ export const api = {
   },
 
   // Get latest messages from a specific room
-  getLatestMessages: async (roomId, limit = 50) => {
+  getLatestMessages: async (roomId: string, limit: number = 50): Promise<Message[]> => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms/${roomId}/messages/latest?limit=${limit}`);
       return await handleResponse(response);

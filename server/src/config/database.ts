@@ -1,19 +1,28 @@
-const { Pool } = require('pg');
+import { Pool, PoolClient, QueryResult } from 'pg';
+
+interface DatabaseConfig {
+    connectionString?: string;
+    ssl?: boolean | { rejectUnauthorized: boolean };
+}
 
 class Database {
+    private pool: Pool;
+
     constructor() {
-        this.pool = new Pool({
+        const config: DatabaseConfig = {
             connectionString: process.env.DATABASE_URL,
             ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-        });
+        };
         
-        this.pool.on('error', (err) => {
+        this.pool = new Pool(config);
+        
+        this.pool.on('error', (err: Error) => {
             console.error('Unexpected error on idle client', err);
             process.exit(-1);
         });
     }
 
-    async query(text, params) {
+    async query(text: string, params?: any[]): Promise<QueryResult> {
         const start = Date.now();
         try {
             const res = await this.pool.query(text, params);
@@ -26,15 +35,15 @@ class Database {
         }
     }
 
-    async getClient() {
+    async getClient(): Promise<PoolClient> {
         return this.pool.connect();
     }
 
-    async close() {
+    async close(): Promise<void> {
         return this.pool.end();
     }
 
-    async initializeTables() {
+    async initializeTables(): Promise<void> {
         try {
             // Create rooms table
             await this.query(`
@@ -74,4 +83,4 @@ class Database {
     }
 }
 
-module.exports = new Database();
+export default new Database();

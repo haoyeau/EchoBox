@@ -1,7 +1,7 @@
-const Room = require('../models/Room');
+import Room, { RoomData } from '../models/Room';
 
 class RoomService {
-    static async createRoom(name) {
+    static async createRoom(name: string): Promise<RoomData> {
         if (!name || name.trim().length === 0) {
             throw new Error('Room name is required');
         }
@@ -13,11 +13,11 @@ class RoomService {
         return await Room.create(name.trim());
     }
 
-    static async getAllRooms() {
+    static async getAllRooms(): Promise<RoomData[]> {
         return await Room.findAll();
     }
 
-    static async getRoomById(id) {
+    static async getRoomById(id: string): Promise<RoomData> {
         if (!id) {
             throw new Error('Room ID is required');
         }
@@ -30,7 +30,7 @@ class RoomService {
         return room;
     }
 
-    static async roomExists(id) {
+    static async roomExists(id: string): Promise<boolean> {
         if (!id) {
             return false;
         }
@@ -38,4 +38,4 @@ class RoomService {
     }
 }
 
-module.exports = RoomService;
+export default RoomService;

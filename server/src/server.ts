@@ -1,11 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const database = require('./config/database');
-const apiRoutes = require('./routes/api');
-const SocketHandler = require('./handlers/socketHandler');
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import path from 'path';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import database from './config/database';
+import apiRoutes from './routes/api';
+import SocketHandler from './handlers/socketHandler';
 
 const app = express();
 
@@ -16,21 +16,21 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the React app build directory in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.use(express.static(path.join(__dirname, '../../client/build')));
 }
 
 // Routes
 app.use('/api', apiRoutes);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 // Catch all handler: send back React's index.html file in production
 if (process.env.NODE_ENV === 'production') {
-    app.get('/{*path}', (req, res) => {
-        res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    app.get('/*', (req: Request, res: Response) => {
+        res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
     });
 }
 
@@ -47,7 +47,7 @@ const socketHandler = new SocketHandler(io);
 io.on('connection', (socket) => socketHandler.handleConnection(socket));
 
 // Initialize database and start server
-async function startServer() {
+async function startServer(): Promise<void> {
     try {
         await database.initializeTables();
         console.log('Database initialized successfully');
@@ -60,4 +60,4 @@ async function startServer() {
 // Start the server initialization
 startServer();
 
-module.exports = { app, httpServer }; // Export app and httpServer for testing purposes
+export { app, httpServer };

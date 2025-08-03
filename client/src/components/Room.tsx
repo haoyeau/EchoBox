@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Send, ArrowLeft, Users, Loader2 } from 'lucide-react';
 import { useSocket } from '../contexts/SocketContext';
 import { useMessages } from '../hooks/useMessages';
 import { useRooms } from '../hooks/useRooms';
 
-const Room = () => {
-  const { roomId } = useParams();
+const Room: React.FC = () => {
+  const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const { isConnected, joinRoom, leaveRoom, connectionError } = useSocket();
   const { getRoom } = useRooms();
   
-  const [newMessage, setNewMessage] = useState('');
-  const [roomName, setRoomName] = useState('');
-  const [roomLoading, setRoomLoading] = useState(true);
-  const [roomError, setRoomError] = useState(null);
+  const [newMessage, setNewMessage] = useState<string>('');
+  const [roomName, setRoomName] = useState<string>('');
+  const [roomLoading, setRoomLoading] = useState<boolean>(true);
+  const [roomError, setRoomError] = useState<string | null>(null);
   
   const {
     messages,
@@ -23,10 +23,10 @@ const Room = () => {
     sending,
     sendMessage,
     clearError: clearMessagesError
-  } = useMessages(roomId);
+  } = useMessages(roomId || '');
   
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Load room data
   useEffect(() => {
@@ -39,7 +39,7 @@ const Room = () => {
         const room = await getRoom(roomId);
         setRoomName(room.name);
       } catch (err) {
-        setRoomError(err.message || 'Room not found');
+        setRoomError((err as any).message || 'Room not found');
         console.error('Error loading room data:', err);
       } finally {
         setRoomLoading(false);
@@ -72,7 +72,7 @@ const Room = () => {
     inputRef.current?.focus();
   }, []);
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!newMessage.trim() || sending) return;
 
@@ -87,12 +87,12 @@ const Room = () => {
     navigate('/');
   };
 
-  const formatMessageTime = (timestamp) => {
+  const formatMessageTime = (timestamp: string): string => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatMessageDate = (timestamp) => {
+  const formatMessageDate = (timestamp: string): string => {
     const date = new Date(timestamp);
     const today = new Date();
     const yesterday = new Date(today);
@@ -108,11 +108,11 @@ const Room = () => {
   };
 
   // Group messages by date
-  const groupMessagesByDate = (messages) => {
-    const groups = [];
-    let currentGroup = null;
+  const groupMessagesByDate = (messages: any[]): any[] => {
+    const groups: any[] = [];
+    let currentGroup: any = null;
 
-    messages.forEach((message) => {
+    messages.forEach((message: any) => {
       const messageDate = new Date(message.timestamp).toDateString();
       
       if (!currentGroup || currentGroup.date !== messageDate) {
@@ -225,7 +225,7 @@ const Room = () => {
               <div className="date-separator">
                 <span>{group.dateLabel}</span>
               </div>
-              {group.messages.map((message, index) => (
+              {group.messages.map((message: any, index: number) => (
                 <div key={message.id || `${group.date}-${index}`} className="message">
                   <div className="message-header">
                     <span className="message-time">

@@ -1,10 +1,26 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import io from 'socket.io-client';
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import io, { Socket } from 'socket.io-client';
 import config from '../config/environment';
+import { Message } from '../types';
 
-const SocketContext = createContext();
+interface SocketContextType {
+  socket: Socket | null;
+  isConnected: boolean;
+  connectionError: string | null;
+  joinRoom: (roomId: string) => void;
+  leaveRoom: (roomId: string) => void;
+  sendMessage: (roomId: string, message: string | { content: string }) => void;
+  onNewMessage: (callback: (message: Message) => void) => (() => void) | undefined;
+  onRoomHistory: (callback: (messages: Message[]) => void) => (() => void) | undefined;
+}
 
-export const useSocket = () => {
+interface SocketProviderProps {
+  children: ReactNode;
+}
+
+const SocketContext = createContext<SocketContextType | undefined>(undefined);
+
+export const useSocket = (): SocketContextType => {
   const context = useContext(SocketContext);
   if (!context) {
     throw new Error('useSocket must be used within a SocketProvider');
@@ -12,10 +28,10 @@ export const useSocket = () => {
   return context;
 };
 
-export const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionError, setConnectionError] = useState(null);
+export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   useEffect(() => {
     // Get socket URL from environment configuration
@@ -40,13 +56,13 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(false);
     });
 
-    newSocket.on('connect_error', (error) => {
+    newSocket.on('connect_error', (error: Error) => {
       console.error('Connection error:', error);
       setConnectionError(error.message);
       setIsConnected(false);
     });
 
-    newSocket.on('error', (error) => {
+    newSocket.on('error', (error: any) => {
       console.error('Socket error:', error);
       setConnectionError(error.message);
     });
@@ -58,21 +74,21 @@ export const SocketProvider = ({ children }) => {
     };
   }, []);
 
-  const joinRoom = useCallback((roomId) => {
+  const joinRoom = useCallback((roomId: string) => {
     if (socket && isConnected) {
       console.log('Joining room:', roomId);
       socket.emit('joinRoom', { roomId });
     }
   }, [socket, isConnected]);
 
-  const leaveRoom = useCallback((roomId) => {
+  const leaveRoom = useCallback((roomId: string) => {
     if (socket && isConnected) {
       console.log('Leaving room:', roomId);
       socket.emit('leaveRoom', { roomId });
     }
   }, [socket, isConnected]);
 
-  const sendMessage = useCallback((roomId, message) => {
+  const sendMessage = useCallback((roomId: string, message: string | { content: string }) => {
     if (socket && isConnected) {
       const messageData = {
         roomId,
@@ -85,21 +101,21 @@ export const SocketProvider = ({ children }) => {
     }
   }, [socket, isConnected]);
 
-  const onNewMessage = useCallback((callback) => {
+  const onNewMessage = useCallback((callback: (message: Message) => void) => {
     if (socket) {
       socket.on('newMessage', callback);
       return () => socket.off('newMessage', callback);
     }
   }, [socket]);
 
-  const onRoomHistory = useCallback((callback) => {
+  const onRoomHistory = useCallback((callback: (messages: Message[]) => void) => {
     if (socket) {
       socket.on('roomHistory', callback);
       return () => socket.off('roomHistory', callback);
     }
   }, [socket]);
 
-  const value = {
+  const value: SocketContextType = {
     socket,
     isConnected,
     connectionError,

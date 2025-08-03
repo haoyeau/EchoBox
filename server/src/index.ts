@@ -1,5 +1,5 @@
-require('dotenv').config();
-const { httpServer } = require('./server');
+import 'dotenv/config';
+import { httpServer } from './server';
 
 const PORT = process.env.PORT || 3001;
 

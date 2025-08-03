@@ -1,8 +1,18 @@
-const Message = require('../models/Message');
-const RoomService = require('./roomService');
+import Message, { MessageData } from '../models/Message';
+import RoomService from './roomService';
+
+export interface PaginationResult {
+    messages: MessageData[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
 
 class MessageService {
-    static async createMessage(roomId, content) {
+    static async createMessage(roomId: string, content: string): Promise<MessageData> {
         if (!roomId) {
             throw new Error('Room ID is required');
         }
@@ -20,7 +30,7 @@ class MessageService {
         return await Message.create(roomId, content.trim());
     }
 
-    static async getRoomMessages(roomId, page = 1, limit = 100) {
+    static async getRoomMessages(roomId: string, page: number = 1, limit: number = 100): Promise<PaginationResult> {
         if (!roomId) {
             throw new Error('Room ID is required');
         }
@@ -46,7 +56,7 @@ class MessageService {
         };
     }
 
-    static async getLatestMessages(roomId, limit = 50) {
+    static async getLatestMessages(roomId: string, limit: number = 50): Promise<MessageData[]> {
         if (!roomId) {
             throw new Error('Room ID is required');
         }
@@ -60,7 +70,7 @@ class MessageService {
         return await Message.getLatestMessages(roomId, limit);
     }
 
-    static async deleteRoomMessages(roomId) {
+    static async deleteRoomMessages(roomId: string): Promise<MessageData[]> {
         if (!roomId) {
             throw new Error('Room ID is required');
         }
@@ -69,4 +79,4 @@ class MessageService {
     }
 }
 
-module.exports = MessageService;
+export default MessageService;

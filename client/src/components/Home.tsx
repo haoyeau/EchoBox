@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { Plus, MessageCircle, Users, Calendar } from 'lucide-react';
 import { useRooms } from '../hooks/useRooms';
+import { Room } from '../types';
 
-const Home = () => {
-  const [newRoomName, setNewRoomName] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+const Home: React.FC = () => {
+  const [newRoomName, setNewRoomName] = useState<string>('');
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const navigate = useNavigate();
   
   const { 
@@ -16,7 +17,7 @@ const Home = () => {
     clearError 
   } = useRooms();
 
-  const handleCreateRoom = async (e) => {
+  const handleCreateRoom = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!newRoomName.trim()) return;
 
@@ -34,14 +35,14 @@ const Home = () => {
     }
   };
 
-  const handleRoomClick = (roomId) => {
+  const handleRoomClick = (roomId: string): void => {
     navigate(`/room/${roomId}`);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = (now - date) / (1000 * 60 * 60);
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
     if (diffInHours < 24) {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -121,7 +122,7 @@ const Home = () => {
           </div>
         ) : (
           <div className="rooms-grid">
-            {rooms.map((room) => (
+            {rooms.map((room: Room) => (
               <div
                 key={room.id}
                 className="room-card"
@@ -133,7 +134,7 @@ const Home = () => {
                 <div className="room-info">
                   <div className="room-meta">
                     <Calendar size={16} />
-                    <span>Created {formatDate(room.created_at)}</span>
+                    <span>Created {formatDate(room.created_at || '')}</span>
                   </div>
                   <div className="room-join">
                     <Users size={16} />
