@@ -1,15 +1,16 @@
 // useRooms hook tests
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRooms } from '../../hooks/useRooms';
 import { api } from '../../services/api';
 import { createMockRoom } from '../utils/testUtils';
 
 // Mock the API service
-jest.mock('../../services/api');
+vi.mock('../../services/api');
 
 describe('useRooms hook', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('initial state and loadRooms', () => {

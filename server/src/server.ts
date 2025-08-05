@@ -29,7 +29,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Catch all handler: send back React's index.html file in production
 if (process.env.NODE_ENV === 'production') {
-    app.get('/*', (req: Request, res: Response) => {
+    app.get('/*index', (req: Request, res: Response) => {
         res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
     });
 }

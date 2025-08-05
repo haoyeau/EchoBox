@@ -1,15 +1,18 @@
 // API service tests
-import { api } from '../../services/api';
-import config from '../../config/environment';
-import { createMockRoom, createMockMessage, mockFetchResponse, mockFetchError } from '../utils/testUtils';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import api from '../../services/api';
+import { mockFetchResponse, mockFetchError, createMockRoom } from '../utils/testUtils';
 
 // Mock the config
-jest.mock('../../config/environment', () => ({
-  apiBaseUrl: 'http://localhost:3001/api'
+vi.mock('../../config/environment', () => ({
+  default: {
+    apiBaseUrl: 'http://localhost:3001/api'
+  }
 }));
 
 // Mock fetch
-global.fetch = jest.fn();
+// Mock fetch globally
+global.fetch = vi.fn();
 
 describe('API Service', () => {
   beforeEach(() => {
@@ -17,7 +20,7 @@ describe('API Service', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   describe('getRooms', () => {

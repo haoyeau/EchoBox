@@ -17,6 +17,7 @@ A thoughtful discussion platform built with **TypeScript**, **React**, and **Nod
 
 ### Client (React + TypeScript)
 - **React 19** with TypeScript and TSX components
+- **Vite** for fast development and optimized builds
 - **Custom TypeScript hooks** for rooms and messages with proper typing
 - **Socket.io-client** with typed event interfaces
 - **Error boundary** with comprehensive error handling
@@ -47,6 +48,7 @@ EchoBox includes a comprehensive test suite covering both client and server comp
 - **Component Tests**: React component behavior with proper typing
 - **Socket Tests**: WebSocket event handling with typed events
 - **Type Tests**: TypeScript compilation and type checking
+- **Vitest** for fast and modern testing with Vite integration
 
 ### Running Tests
 
@@ -107,17 +109,12 @@ client/src/__tests__/
 
 3. **Configure database** (Update `server/.env` with your PostgreSQL connection)
 
-4. **Build TypeScript (for production)**
+4. **Build for production**
    ```bash
    npm run build
    ```
 
-5. **Run tests**
-   ```bash
-   npm test
-   ```
-
-6. **Start development servers**
+5. **Start development servers**
    ```bash
    npm run start:dev
    ```
@@ -131,24 +128,23 @@ npm run install:all
 # Start both client and server in development mode with hot reloading
 npm run start:dev
 
-# Build TypeScript files
-cd server && npm run build  # Compiles to dist/
-cd client && npm run build  # Builds React app
+# Build for production
+npm run build  # Builds both client and server
 
 # Run TypeScript type checking
 cd server && npx tsc --noEmit
-cd client && npx tsc --noEmit
+cd client && npm run type-check
 ```
 
 ## 🛠️ Technology Stack
 
 ### Core Technologies
-- **Frontend**: React 19, TypeScript, TSX components
+- **Frontend**: React 19, TypeScript, Vite
 - **Backend**: Node.js, Express, TypeScript
 - **Database**: PostgreSQL with typed queries
 - **Real-time**: Socket.io with typed events
-- **Testing**: Jest, React Testing Library, Supertest
-- **Build**: TypeScript compiler, React Scripts
+- **Testing**: Vitest, React Testing Library, Supertest
+- **Build**: Vite, TypeScript compiler
 
 ### TypeScript Features
 - **Strict type checking** for compile-time error prevention

@@ -57,7 +57,7 @@ describe('ErrorBoundary', () => {
   it('should refresh page when refresh button is clicked', () => {
     // Mock window.location.reload
     delete window.location;
-    window.location = { reload: jest.fn() };
+    window.location = { reload: vi.fn() };
 
     render(
       <ErrorBoundary>

@@ -1,4 +1,5 @@
 // useMessages hook tests
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useMessages } from '../../hooks/useMessages';
 import { api } from '../../services/api';
@@ -6,19 +7,19 @@ import { useSocket } from '../../contexts/SocketContext';
 import { createMockMessage } from '../utils/testUtils';
 
 // Mock dependencies
-jest.mock('../../services/api');
-jest.mock('../../contexts/SocketContext');
+vi.mock('../../services/api');
+vi.mock('../../contexts/SocketContext');
 
 describe('useMessages hook', () => {
   const mockUseSocket = {
-    onNewMessage: jest.fn(),
-    onRoomHistory: jest.fn(),
-    sendMessage: jest.fn(),
+    onNewMessage: vi.fn(),
+    onRoomHistory: vi.fn(),
+    sendMessage: vi.fn(),
     isConnected: true
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     useSocket.mockReturnValue(mockUseSocket);
   });
 
@@ -314,8 +315,8 @@ describe('useMessages hook', () => {
 
   describe('socket event listeners', () => {
     it('should set up socket listeners when roomId is provided', async () => {
-      const mockCleanupNewMessage = jest.fn();
-      const mockCleanupRoomHistory = jest.fn();
+      const mockCleanupNewMessage = vi.fn();
+      const mockCleanupRoomHistory = vi.fn();
       
       mockUseSocket.onNewMessage.mockReturnValue(mockCleanupNewMessage);
       mockUseSocket.onRoomHistory.mockReturnValue(mockCleanupRoomHistory);

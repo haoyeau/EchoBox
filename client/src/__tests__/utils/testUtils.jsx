@@ -1,5 +1,6 @@
 // Utility functions for testing
-const { api } = require('../../services/api');
+import api from '../../services/api';
+import { vi } from 'vitest';
 
 /**
  * Test utilities for client-side testing
@@ -34,10 +35,10 @@ export const createMockSocket = () => {
     on: jest.fn((event, handler) => {
       listeners[event] = handler;
     }),
-    off: jest.fn(),
-    emit: jest.fn(),
-    connect: jest.fn(),
-    disconnect: jest.fn(),
+    off: vi.fn(),
+    emit: vi.fn(),
+    connect: vi.fn(),
+    disconnect: vi.fn(),
     connected: true,
     // Helper to trigger events in tests
     _trigger: (event, data) => {
@@ -89,21 +90,17 @@ export const mockConsole = () => {
   const originalConsole = { ...console };
   
   beforeEach(() => {
-    jest.spyOn(console, 'log').mockImplementation();
-    jest.spyOn(console, 'warn').mockImplementation();
-    jest.spyOn(console, 'error').mockImplementation();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
   
   afterEach(() => {
-    console.log.mockRestore();
-    console.warn.mockRestore();
-    console.error.mockRestore();
+    vi.restoreAllMocks();
   });
-  
-  return originalConsole;
-};
 
-export default {
+  return originalConsole;
+};export default {
   mockFetchResponse,
   mockFetchError,
   createMockSocket,
