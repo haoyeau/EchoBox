@@ -4,7 +4,7 @@
   "description": "EchoBox - A focused discussion platform where every voice matters. Anonymous, topic-centered conversations without judgment.",
   "private": true,
   "scripts": {
-    "heroku-postbuild": "cd client && npm install --include=dev && npm run build && cd ../server && npm install && npm run build",
+    "heroku-postbuild": "cd client && npm install --include=dev && npm run build && cd ../server && npm install --include=dev && npm run build",
     "start": "cd server && npm start",
     "build": "cd server && npm run build",
     "test": "./test-all.sh",
