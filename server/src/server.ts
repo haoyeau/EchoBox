@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import database from './config/database';
+import database from './config/prisma';
 import apiRoutes from './routes/api';
 import SocketHandler from './handlers/socketHandler';
 
@@ -49,7 +49,7 @@ io.on('connection', (socket) => socketHandler.handleConnection(socket));
 // Initialize database and start server
 async function startServer(): Promise<void> {
     try {
-        await database.initializeTables();
+        await database.connect();
         console.log('Database initialized successfully');
     } catch (error) {
         console.error('Failed to initialize database:', error);

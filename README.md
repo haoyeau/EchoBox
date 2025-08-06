@@ -27,14 +27,14 @@ A thoughtful discussion platform built with **TypeScript**, **React**, and **Nod
 ### Server (Node.js + TypeScript)
 - **Express.js REST API** with TypeScript and proper typing
 - **Socket.io** for WebSocket connections with typed events
-- **PostgreSQL** with typed query interfaces
+- **PostgreSQL** with **Prisma ORM** for type-safe database operations
 - **Layered architecture** (Controllers → Services → Models) with full typing
 - **Environment-based configuration** with type validation
 - **Compiled output** to JavaScript for production
 
 ### Type Safety
 - **Shared interfaces** between client and server
-- **Database query typing** with PostgreSQL types
+- **Prisma-generated types** for database operations with full type safety
 - **API request/response typing** for full-stack type safety
 - **Socket event typing** for real-time communication
 - **Strict TypeScript configuration** for maximum safety
@@ -109,7 +109,14 @@ client/src/__tests__/
 
 3. **Configure database** (Update `server/.env` with your PostgreSQL connection)
 
-4. **Build for production**
+4. **Setup database schema**
+   ```bash
+   cd server
+   npm run db:generate  # Generate Prisma client
+   npm run db:push      # Push schema to database
+   ```
+
+5. **Build for production**
    ```bash
    npm run build
    ```
@@ -125,11 +132,22 @@ client/src/__tests__/
 # Install dependencies for both client and server
 npm run install:all
 
+# Setup database (first time only)
+cd server
+npm run db:generate  # Generate Prisma client
+npm run db:push      # Push schema to database
+cd ..
+
 # Start both client and server in development mode with hot reloading
 npm run start:dev
 
 # Build for production
 npm run build  # Builds both client and server
+
+# Database operations
+cd server
+npm run db:studio    # Open Prisma Studio (database GUI)
+npm run db:migrate   # Create and apply migrations
 
 # Run TypeScript type checking
 cd server && npx tsc --noEmit
@@ -141,7 +159,7 @@ cd client && npm run type-check
 ### Core Technologies
 - **Frontend**: React 19, TypeScript, Vite
 - **Backend**: Node.js, Express, TypeScript
-- **Database**: PostgreSQL with typed queries
+- **Database**: PostgreSQL with **Prisma ORM** for type-safe operations
 - **Real-time**: Socket.io with typed events
 - **Testing**: Vitest, React Testing Library, Supertest
 - **Build**: Vite, TypeScript compiler
@@ -150,9 +168,16 @@ cd client && npm run type-check
 - **Strict type checking** for compile-time error prevention
 - **Shared type definitions** between client and server
 - **Typed API contracts** for request/response interfaces
-- **Database type safety** with PostgreSQL types
+- **Prisma-generated types** for database operations with full type safety
 - **Socket event typing** for real-time communication
 - **Modern ES2020+ features** with full type support
+
+### Database & ORM
+- **Prisma ORM** for type-safe database operations
+- **Auto-generated TypeScript types** from database schema
+- **Migration management** with version control
+- **Prisma Studio** for database GUI and exploration
+- **Connection pooling** and query optimization
 
 ### Project Structure
 
@@ -172,10 +197,12 @@ cd client && npm run type-check
 │   ├── src/
 │   │   ├── controllers/    # Express route controllers
 │   │   ├── services/       # Business logic layer
-│   │   ├── models/         # Data access layer
+│   │   ├── models/         # Data access layer with Prisma
 │   │   ├── handlers/       # Socket.io event handlers
 │   │   ├── routes/         # API route definitions
-│   │   └── config/         # Database configuration
+│   │   └── config/         # Database and Prisma configuration
+│   ├── prisma/
+│   │   └── schema.prisma   # Database schema definition
 │   ├── dist/               # Compiled JavaScript output
 │   ├── tsconfig.json       # TypeScript configuration
 │   └── package.json
@@ -199,36 +226,6 @@ cd client && npm run type-check
 - `newMessage` - Receive new message
 
 All API endpoints and socket events are fully typed with TypeScript interfaces.
-
-## 🎯 Development Benefits
-
-### Type Safety
-- **Compile-time error detection** prevents runtime issues
-- **IntelliSense support** for better development experience
-- **Refactoring safety** with IDE assistance
-- **API contract enforcement** between frontend and backend
-
-### Code Quality
-- **Consistent interfaces** across the application
-- **Self-documenting code** through type definitions
-- **Better maintainability** with clear type contracts
-- **Team collaboration** with shared type definitions
-
-## 🚀 Deployment
-
-### Production Build
-```bash
-# Build both client and server
-npm run build
-
-# Start production server
-npm start
-```
-
-### Environment Variables
-- Server requires PostgreSQL connection string
-- Client can be configured for different API endpoints
-- Socket.io endpoints are configurable per environment
 
 ## 📄 License
 

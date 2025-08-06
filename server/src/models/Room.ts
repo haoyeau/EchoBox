@@ -1,42 +1,75 @@
-import database from '../config/database';
+import database from '../config/prisma';
 import { randomUUID } from 'crypto';
+import { Room as PrismaRoom } from '@prisma/client';
 
 export interface RoomData {
     id: string;
     name: string;
-    created_at?: Date;
+    createdAt?: Date;
 }
 
 class Room {
     static async create(name: string): Promise<RoomData> {
         const id = randomUUID();
-        const query = 'INSERT INTO rooms (id, name) VALUES ($1, $2) RETURNING *';
-        const result = await database.query(query, [id, name]);
-        return result.rows[0] as RoomData;
+        const room = await database.prisma.room.create({
+            data: {
+                id,
+                name,
+            },
+        });
+        return {
+            id: room.id,
+            name: room.name,
+            createdAt: room.createdAt,
+        };
     }
 
     static async findAll(): Promise<RoomData[]> {
-        const query = 'SELECT id, name, created_at FROM rooms ORDER BY created_at DESC';
-        const result = await database.query(query);
-        return result.rows as RoomData[];
+        const rooms = await database.prisma.room.findMany({
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        return rooms.map(room => ({
+            id: room.id,
+            name: room.name,
+            createdAt: room.createdAt,
+        }));
     }
 
     static async findById(id: string): Promise<RoomData | undefined> {
-        const query = 'SELECT * FROM rooms WHERE id = $1';
-        const result = await database.query(query, [id]);
-        return result.rows[0] as RoomData | undefined;
+        const room = await database.prisma.room.findUnique({
+            where: { id },
+        });
+        if (!room) return undefined;
+        return {
+            id: room.id,
+            name: room.name,
+            createdAt: room.createdAt,
+        };
     }
 
     static async delete(id: string): Promise<RoomData | undefined> {
-        const query = 'DELETE FROM rooms WHERE id = $1 RETURNING *';
-        const result = await database.query(query, [id]);
-        return result.rows[0] as RoomData | undefined;
+        try {
+            const room = await database.prisma.room.delete({
+                where: { id },
+            });
+            return {
+                id: room.id,
+                name: room.name,
+                createdAt: room.createdAt,
+            };
+        } catch (error) {
+            return undefined;
+        }
     }
 
     static async exists(id: string): Promise<boolean> {
-        const query = 'SELECT EXISTS(SELECT 1 FROM rooms WHERE id = $1)';
-        const result = await database.query(query, [id]);
-        return result.rows[0].exists as boolean;
+        const room = await database.prisma.room.findUnique({
+            where: { id },
+            select: { id: true },
+        });
+        return room !== null;
     }
 }
 
