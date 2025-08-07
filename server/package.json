@@ -1,7 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/src/index.js",
