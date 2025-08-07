@@ -1,12 +1,16 @@
 // Component tests
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { mockConsole } from '../utils/testUtils';
 
 // Mock component that throws an error
-const ThrowError = ({ shouldThrow }) => {
+interface ThrowErrorProps {
+  shouldThrow: boolean;
+}
+
+const ThrowError: React.FC<ThrowErrorProps> = ({ shouldThrow }) => {
   if (shouldThrow) {
     throw new Error('Test error');
   }
@@ -56,8 +60,11 @@ describe('ErrorBoundary', () => {
 
   it('should refresh page when refresh button is clicked', () => {
     // Mock window.location.reload
-    delete window.location;
-    window.location = { reload: vi.fn() };
+    const mockReload = vi.fn();
+    Object.defineProperty(window, 'location', {
+      value: { reload: mockReload },
+      writable: true
+    });
 
     render(
       <ErrorBoundary>
@@ -68,7 +75,7 @@ describe('ErrorBoundary', () => {
     const refreshButton = screen.getByRole('button', { name: /refresh page/i });
     fireEvent.click(refreshButton);
 
-    expect(window.location.reload).toHaveBeenCalled();
+    expect(mockReload).toHaveBeenCalled();
   });
 
   it('should log error to console', () => {

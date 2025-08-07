@@ -1,10 +1,12 @@
 // RoomService tests
-const RoomService = require('../../services/roomService');
-const Room = require('../../models/Room');
-const { createMockRoom, cleanupMocks } = require('../utils/testUtils');
+import RoomService from '../../src/services/roomService';
+import Room from '../../src/models/Room';
+import { createMockRoom, cleanupMocks } from '../utils/testUtils';
 
 // Mock the Room model
-jest.mock('../../models/Room');
+jest.mock('../../src/models/Room');
+
+const mockedRoom = Room as jest.Mocked<typeof Room>;
 
 describe('RoomService', () => {
   beforeEach(() => {
@@ -14,19 +16,19 @@ describe('RoomService', () => {
   describe('createRoom', () => {
     it('should create a room with valid name', async () => {
       const mockRoom = createMockRoom({ name: 'Test Room' });
-      Room.create.mockResolvedValue(mockRoom);
+      mockedRoom.create.mockResolvedValue(mockRoom);
 
       const result = await RoomService.createRoom('Test Room');
 
-      expect(Room.create).toHaveBeenCalledWith('Test Room');
+      expect(mockedRoom.create).toHaveBeenCalledWith('Test Room');
       expect(result).toEqual(mockRoom);
     });
 
     it('should throw error if name is empty', async () => {
       await expect(RoomService.createRoom('')).rejects.toThrow('Room name is required');
       await expect(RoomService.createRoom('   ')).rejects.toThrow('Room name is required');
-      await expect(RoomService.createRoom(null)).rejects.toThrow('Room name is required');
-      await expect(RoomService.createRoom(undefined)).rejects.toThrow('Room name is required');
+      await expect(RoomService.createRoom(null as any)).rejects.toThrow('Room name is required');
+      await expect(RoomService.createRoom(undefined as any)).rejects.toThrow('Room name is required');
     });
 
     it('should throw error if name is too long', async () => {
@@ -36,11 +38,11 @@ describe('RoomService', () => {
 
     it('should trim whitespace from room name', async () => {
       const mockRoom = createMockRoom({ name: 'Test Room' });
-      Room.create.mockResolvedValue(mockRoom);
+      mockedRoom.create.mockResolvedValue(mockRoom);
 
       await RoomService.createRoom('  Test Room  ');
 
-      expect(Room.create).toHaveBeenCalledWith('Test Room');
+      expect(mockedRoom.create).toHaveBeenCalledWith('Test Room');
     });
   });
 
@@ -50,16 +52,16 @@ describe('RoomService', () => {
         createMockRoom({ id: 'room-1', name: 'Room 1' }),
         createMockRoom({ id: 'room-2', name: 'Room 2' })
       ];
-      Room.findAll.mockResolvedValue(mockRooms);
+      mockedRoom.findAll.mockResolvedValue(mockRooms);
 
       const result = await RoomService.getAllRooms();
 
-      expect(Room.findAll).toHaveBeenCalled();
+      expect(mockedRoom.findAll).toHaveBeenCalled();
       expect(result).toEqual(mockRooms);
     });
 
     it('should return empty array if no rooms exist', async () => {
-      Room.findAll.mockResolvedValue([]);
+      mockedRoom.findAll.mockResolvedValue([]);
 
       const result = await RoomService.getAllRooms();
 
@@ -70,39 +72,39 @@ describe('RoomService', () => {
   describe('getRoomById', () => {
     it('should return room if it exists', async () => {
       const mockRoom = createMockRoom({ id: 'room-1', name: 'Test Room' });
-      Room.findById.mockResolvedValue(mockRoom);
+      mockedRoom.findById.mockResolvedValue(mockRoom);
 
       const result = await RoomService.getRoomById('room-1');
 
-      expect(Room.findById).toHaveBeenCalledWith('room-1');
+      expect(mockedRoom.findById).toHaveBeenCalledWith('room-1');
       expect(result).toEqual(mockRoom);
     });
 
     it('should throw error if room does not exist', async () => {
-      Room.findById.mockResolvedValue(null);
+      mockedRoom.findById.mockResolvedValue(undefined);
 
       await expect(RoomService.getRoomById('non-existent')).rejects.toThrow('Room not found');
     });
 
     it('should throw error if no ID provided', async () => {
       await expect(RoomService.getRoomById('')).rejects.toThrow('Room ID is required');
-      await expect(RoomService.getRoomById(null)).rejects.toThrow('Room ID is required');
-      await expect(RoomService.getRoomById(undefined)).rejects.toThrow('Room ID is required');
+      await expect(RoomService.getRoomById(null as any)).rejects.toThrow('Room ID is required');
+      await expect(RoomService.getRoomById(undefined as any)).rejects.toThrow('Room ID is required');
     });
   });
 
   describe('roomExists', () => {
     it('should return true if room exists', async () => {
-      Room.exists.mockResolvedValue(true);
+      mockedRoom.exists.mockResolvedValue(true);
 
       const result = await RoomService.roomExists('room-1');
 
-      expect(Room.exists).toHaveBeenCalledWith('room-1');
+      expect(mockedRoom.exists).toHaveBeenCalledWith('room-1');
       expect(result).toBe(true);
     });
 
     it('should return false if room does not exist', async () => {
-      Room.exists.mockResolvedValue(false);
+      mockedRoom.exists.mockResolvedValue(false);
 
       const result = await RoomService.roomExists('non-existent');
 
@@ -111,13 +113,13 @@ describe('RoomService', () => {
 
     it('should return false if no ID provided', async () => {
       const result1 = await RoomService.roomExists('');
-      const result2 = await RoomService.roomExists(null);
-      const result3 = await RoomService.roomExists(undefined);
+      const result2 = await RoomService.roomExists(null as any);
+      const result3 = await RoomService.roomExists(undefined as any);
 
       expect(result1).toBe(false);
       expect(result2).toBe(false);
       expect(result3).toBe(false);
-      expect(Room.exists).not.toHaveBeenCalled();
+      expect(mockedRoom.exists).not.toHaveBeenCalled();
     });
   });
 });

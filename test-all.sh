@@ -20,7 +20,7 @@ echo ""
 echo -e "${YELLOW}📱 Running Client Tests...${NC}"
 echo "----------------------------------------"
 cd client
-npm test -- --watchAll=false --coverage 2>/dev/null
+npm test 2>/dev/null
 CLIENT_RESULT=$?
 
 echo ""

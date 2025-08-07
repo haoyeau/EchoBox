@@ -41,14 +41,7 @@ A thoughtful discussion platform built with **TypeScript**, **React**, and **Nod
 
 ## 🧪 Testing
 
-EchoBox includes a comprehensive test suite covering both client and server components with TypeScript support:
-
-### Test Coverage
-- **Unit Tests**: Service logic, API functions, React hooks (TypeScript)
-- **Component Tests**: React component behavior with proper typing
-- **Socket Tests**: WebSocket event handling with typed events
-- **Type Tests**: TypeScript compilation and type checking
-- **Vitest** for fast and modern testing with Vite integration
+EchoBox includes a comprehensive test suite covering both client and server components:
 
 ### Running Tests
 
@@ -68,23 +61,6 @@ npm run test:server:coverage
 
 # Watch mode for development
 npm run test:watch
-```
-
-### Test Structure
-
-```
-server/__tests__/
-├── controllers/     # API endpoint tests
-├── services/        # Business logic tests  
-├── models/          # Data layer tests
-├── handlers/        # Socket handler tests
-└── utils/           # Test utilities
-
-client/src/__tests__/
-├── components/      # React component tests
-├── hooks/           # Custom hook tests
-├── services/        # API service tests
-└── utils/           # Test utilities
 ```
 
 ## 🚀 Quick Start
@@ -127,7 +103,6 @@ client/src/__tests__/
    ```
 
 ### Development Workflow
-
 ```bash
 # Install dependencies for both client and server
 npm run install:all
@@ -152,6 +127,13 @@ npm run db:migrate   # Create and apply migrations
 # Run TypeScript type checking
 cd server && npx tsc --noEmit
 cd client && npm run type-check
+
+# Run TypeScript compilation for server
+cd server && npm run build
+
+# Run individual test suites
+npm run test:server:watch    # Server tests in watch mode
+npm run test:client:watch    # Client tests in watch mode
 ```
 
 ## 🛠️ Technology Stack
@@ -171,6 +153,8 @@ cd client && npm run type-check
 - **Prisma-generated types** for database operations with full type safety
 - **Socket event typing** for real-time communication
 - **Modern ES2020+ features** with full type support
+- **Test Type Safety**: All tests written in TypeScript with proper mock typing
+- **Consolidated Configuration**: Single TypeScript setup per environment
 
 ### Database & ORM
 - **Prisma ORM** for type-safe database operations
@@ -182,51 +166,38 @@ cd client && npm run type-check
 ### Project Structure
 
 ```
-├── client/                 # React TypeScript frontend
+├── client/                     # React TypeScript frontend
 │   ├── src/
-│   │   ├── components/     # TSX React components
-│   │   ├── contexts/       # Typed React contexts
-│   │   ├── hooks/          # Custom TypeScript hooks
-│   │   ├── services/       # API service layer
-│   │   ├── types/          # Shared type definitions
-│   │   └── config/         # Environment configuration
-│   ├── tsconfig.json       # TypeScript configuration
+│   │   ├── components/         # TSX React components
+│   │   ├── contexts/           # Typed React contexts
+│   │   ├── hooks/              # Custom TypeScript hooks
+│   │   ├── services/           # API service layer
+│   │   ├── types/              # Shared type definitions
+│   │   ├── config/             # Environment configuration
+│   │   └── __tests__/          # TypeScript test files (.tsx)
+│   ├── tsconfig.json           # Client TypeScript configuration
+│   ├── vite.config.ts          # Vite configuration with TypeScript
 │   └── package.json
 │
-├── server/                 # Node.js TypeScript backend
+├── server/                     # Node.js TypeScript backend
 │   ├── src/
-│   │   ├── controllers/    # Express route controllers
-│   │   ├── services/       # Business logic layer
-│   │   ├── models/         # Data access layer with Prisma
-│   │   ├── handlers/       # Socket.io event handlers
-│   │   ├── routes/         # API route definitions
-│   │   └── config/         # Database and Prisma configuration
+│   │   ├── controllers/        # Express route controllers
+│   │   ├── services/           # Business logic layer
+│   │   ├── models/             # Data access layer with Prisma
+│   │   ├── handlers/           # Socket.io event handlers
+│   │   ├── routes/             # API route definitions
+│   │   ├── config/             # Database and Prisma configuration
+│   │   └── types/              # Server-specific type definitions
+│   ├── __tests__/              # TypeScript test files (.ts)
 │   ├── prisma/
-│   │   └── schema.prisma   # Database schema definition
-│   ├── dist/               # Compiled JavaScript output
-│   ├── tsconfig.json       # TypeScript configuration
+│   │   └── schema.prisma       # Database schema definition
+│   ├── dist/                   # Compiled JavaScript output
+│   ├── tsconfig.json           # Unified TypeScript configuration
+│   ├── jest.config.ts          # Jest configuration with TypeScript
 │   └── package.json
 │
-└── package.json              # Workspace scripts
+└── package.json                # Workspace scripts
 ```
 
-## 📚 API Documentation
-
-### REST Endpoints
-- `GET /api/rooms` - Get all discussion rooms
-- `POST /api/rooms` - Create a new room
-- `GET /api/rooms/:id` - Get specific room details
-- `GET /api/rooms/:id/messages` - Get room messages (paginated)
-- `GET /api/rooms/:id/messages/latest` - Get latest messages
-
-### Socket Events
-- `joinRoom` - Join a discussion room
-- `leaveRoom` - Leave a discussion room
-- `sendMessage` - Send anonymous message
-- `newMessage` - Receive new message
-
-All API endpoints and socket events are fully typed with TypeScript interfaces.
-
 ## 📄 License
-
 This project is licensed under the ISC License.

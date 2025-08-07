@@ -7,7 +7,7 @@ interface UseRoomsReturn {
   loading: boolean;
   error: string | null;
   loadRooms: () => Promise<void>;
-  createRoom: (name: string) => Promise<Room>;
+  createRoom: (name: string) => Promise<Room | null>;
   getRoom: (roomId: string) => Promise<Room>;
   clearError: () => void;
 }
@@ -31,16 +31,23 @@ export const useRooms = (): UseRoomsReturn => {
     }
   }, []);
 
-  const createRoom = useCallback(async (name: string): Promise<Room> => {
+  const createRoom = useCallback(async (name: string): Promise<Room | null> => {
     try {
       setError(null);
-      const newRoom = await api.createRoom(name);
+      
+      // Validate room name
+      if (!name || !name.trim()) {
+        setError('Room name is required');
+        return null;
+      }
+      
+      const newRoom = await api.createRoom(name.trim());
       setRooms(prev => [newRoom, ...prev]);
       return newRoom;
     } catch (err: any) {
       setError(err.message || 'Failed to create room');
       console.error('Error creating room:', err);
-      throw err;
+      return null;
     }
   }, []);
 

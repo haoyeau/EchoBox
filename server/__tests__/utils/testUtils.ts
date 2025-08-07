@@ -1,9 +1,43 @@
 // Test utilities for server-side testing
 
+export interface MockRoom {
+  id: string;
+  name: string;
+  createdAt?: Date;
+}
+
+export interface MockMessage {
+  id: number;
+  roomId: string;
+  content: string;
+  timestamp: Date;
+}
+
+export interface MockSocket {
+  id: string;
+  join: jest.Mock<any, any>;
+  leave: jest.Mock<any, any>;
+  emit: jest.Mock<any, any>;
+  on: jest.Mock<any, any>;
+  broadcast: {
+    to: jest.Mock<any, any>;
+    emit: jest.Mock<any, any>;
+  };
+}
+
+export interface MockIo {
+  to: jest.Mock<any, any>;
+  emit: jest.Mock<any, any>;
+  sockets: {
+    in: jest.Mock<any, any>;
+    emit: jest.Mock<any, any>;
+  };
+}
+
 /**
  * Mock database query responses
  */
-const mockDatabaseQuery = (mockData) => {
+export const mockDatabaseQuery = (mockData: any[]) => {
   const database = require('../../config/database');
   database.query.mockResolvedValue({ rows: mockData });
   return database;
@@ -12,7 +46,7 @@ const mockDatabaseQuery = (mockData) => {
 /**
  * Mock database query error
  */
-const mockDatabaseError = (error) => {
+export const mockDatabaseError = (error: Error) => {
   const database = require('../../config/database');
   database.query.mockRejectedValue(error);
   return database;
@@ -21,28 +55,28 @@ const mockDatabaseError = (error) => {
 /**
  * Create mock room data
  */
-const createMockRoom = (overrides = {}) => ({
+export const createMockRoom = (overrides: Partial<MockRoom> = {}): MockRoom => ({
   id: 'room-123',
   name: 'Test Room',
-  created_at: new Date().toISOString(),
+  createdAt: new Date(),
   ...overrides
 });
 
 /**
  * Create mock message data
  */
-const createMockMessage = (overrides = {}) => ({
+export const createMockMessage = (overrides: Partial<MockMessage> = {}): MockMessage => ({
   id: 1,
-  room_id: 'room-123',
+  roomId: 'room-123',
   content: 'Test message',
-  timestamp: new Date().toISOString(),
+  timestamp: new Date(),
   ...overrides
 });
 
 /**
  * Create mock socket for testing
  */
-const createMockSocket = () => ({
+export const createMockSocket = (): MockSocket => ({
   id: 'socket-123',
   join: jest.fn(),
   leave: jest.fn(),
@@ -57,7 +91,7 @@ const createMockSocket = () => ({
 /**
  * Create mock io for testing
  */
-const createMockIo = () => ({
+export const createMockIo = (): MockIo => ({
   to: jest.fn().mockReturnThis(),
   emit: jest.fn(),
   sockets: {
@@ -69,7 +103,7 @@ const createMockIo = () => ({
 /**
  * Setup test database with common mock responses
  */
-const setupTestDatabase = () => {
+export const setupTestDatabase = () => {
   const database = require('../../config/database');
   
   // Default successful responses
@@ -84,7 +118,7 @@ const setupTestDatabase = () => {
 /**
  * Clean up mocks after tests
  */
-const cleanupMocks = () => {
+export const cleanupMocks = (): void => {
   jest.clearAllMocks();
   jest.resetModules();
 };
@@ -92,7 +126,7 @@ const cleanupMocks = () => {
 /**
  * Assert error response format
  */
-const expectErrorResponse = (response, status, message) => {
+export const expectErrorResponse = (response: any, status: number, message?: string): void => {
   expect(response.status).toBe(status);
   expect(response.body).toHaveProperty('error');
   if (message) {
@@ -103,22 +137,9 @@ const expectErrorResponse = (response, status, message) => {
 /**
  * Assert successful response format
  */
-const expectSuccessResponse = (response, status = 200) => {
+export const expectSuccessResponse = (response: any, status: number = 200): void => {
   expect(response.status).toBe(status);
   expect(response.body).toBeDefined();
-};
-
-module.exports = {
-  mockDatabaseQuery,
-  mockDatabaseError,
-  createMockRoom,
-  createMockMessage,
-  createMockSocket,
-  createMockIo,
-  setupTestDatabase,
-  cleanupMocks,
-  expectErrorResponse,
-  expectSuccessResponse
 };
 
 // Simple test to make this file valid for Jest
