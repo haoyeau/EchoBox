@@ -65,11 +65,6 @@ npm run test:watch
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Node.js 16+ 
-- PostgreSQL database
-- npm or yarn
-
 ### Installation
 
 1. **Install dependencies**
