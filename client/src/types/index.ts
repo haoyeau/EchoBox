@@ -3,7 +3,7 @@
 export interface Room {
   id: string;
   name: string;
-  created_at?: string;
+  createdAt?: string; // was created_at
 }
 
 export interface Message {

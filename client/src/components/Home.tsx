@@ -134,7 +134,7 @@ const Home: React.FC = () => {
                 <div className="room-info">
                   <div className="room-meta">
                     <Calendar size={16} />
-                    <span>Created {formatDate(room.created_at || '')}</span>
+                    <span>Created {formatDate(room.createdAt || '')}</span>
                   </div>
                   <div className="room-join">
                     <Users size={16} />
